@@ -11,7 +11,8 @@ export default defineConfig({
   build: {
     lib: {
       entry: {
-        client: path.resolve(PACKAGE_DIR, "./src/index.tsx"),
+        admin: path.resolve(PACKAGE_DIR, "./src/admin.tsx"),
+        client: path.resolve(PACKAGE_DIR, "./src/client.tsx"),
       },
       name: "client",
     },

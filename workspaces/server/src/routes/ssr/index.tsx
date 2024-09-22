@@ -14,7 +14,7 @@ import { releaseApiClient } from '@wsh-2024/app/src/features/release/apiClient/r
 import { ClientApp } from '@wsh-2024/app/src/index';
 import { getDayOfWeekStr } from '@wsh-2024/app/src/lib/date/getDayOfWeekStr';
 
-import { INDEX_HTML_PATH } from '../../constants/paths';
+import { CLIENT_HTML_PATH } from '../../constants/paths';
 
 const app = new Hono();
 
@@ -49,7 +49,7 @@ async function createHTML({
   injectData: Record<string, unknown>;
   styleTags: string;
 }): Promise<string> {
-  const htmlContent = await fs.readFile(INDEX_HTML_PATH, 'utf-8');
+  const htmlContent = await fs.readFile(CLIENT_HTML_PATH, 'utf-8');
 
   const content = htmlContent
     .replaceAll('<div id="root"></div>', `<div id="root">${body}</div>`)
