@@ -1,7 +1,7 @@
-import { createSelectSchema } from 'drizzle-zod';
-import type { z } from 'zod';
+import { createSelectSchema } from "drizzle-zod";
+import type { z } from "zod";
 
-import { author, book, episode, image } from '../../models';
+import { author, book, image } from "../../models";
 
 export const PatchAuthorResponseSchema = createSelectSchema(author)
   .pick({
@@ -17,14 +17,6 @@ export const PatchAuthorResponseSchema = createSelectSchema(author)
         name: true,
       })
       .extend({
-        episodes: createSelectSchema(episode)
-          .pick({
-            chapter: true,
-            description: true,
-            id: true,
-            name: true,
-          })
-          .array(),
         image: createSelectSchema(image).pick({
           alt: true,
           id: true,

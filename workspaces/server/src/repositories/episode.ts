@@ -1,28 +1,36 @@
-import { eq } from 'drizzle-orm';
-import { HTTPException } from 'hono/http-exception';
-import type { Result } from 'neverthrow';
-import { err, ok } from 'neverthrow';
+import { eq } from "drizzle-orm";
+import { HTTPException } from "hono/http-exception";
+import type { Result } from "neverthrow";
+import { err, ok } from "neverthrow";
 
-import type { DeleteEpisodeRequestParams } from '@wsh-2024/schema/src/api/episodes/DeleteEpisodeRequestParams';
-import type { DeleteEpisodeResponse } from '@wsh-2024/schema/src/api/episodes/DeleteEpisodeResponse';
-import type { GetEpisodeListRequestQuery } from '@wsh-2024/schema/src/api/episodes/GetEpisodeListRequestQuery';
-import type { GetEpisodeListResponse } from '@wsh-2024/schema/src/api/episodes/GetEpisodeListResponse';
-import type { GetEpisodeRequestParams } from '@wsh-2024/schema/src/api/episodes/GetEpisodeRequestParams';
-import type { GetEpisodeResponse } from '@wsh-2024/schema/src/api/episodes/GetEpisodeResponse';
-import type { PatchEpisodeRequestBody } from '@wsh-2024/schema/src/api/episodes/PatchEpisodeRequestBody';
-import type { PatchEpisodeRequestParams } from '@wsh-2024/schema/src/api/episodes/PatchEpisodeRequestParams';
-import type { PatchEpisodeResponse } from '@wsh-2024/schema/src/api/episodes/PatchEpisodeResponse';
-import type { PostEpisodeRequestBody } from '@wsh-2024/schema/src/api/episodes/PostEpisodeRequestBody';
-import type { PostEpisodeResponse } from '@wsh-2024/schema/src/api/episodes/PostEpisodeResponse';
-import { episode, episodePage } from '@wsh-2024/schema/src/models';
+import type { DeleteEpisodeRequestParams } from "@wsh-2024/schema/src/api/episodes/DeleteEpisodeRequestParams";
+import type { DeleteEpisodeResponse } from "@wsh-2024/schema/src/api/episodes/DeleteEpisodeResponse";
+import type { GetEpisodeListRequestQuery } from "@wsh-2024/schema/src/api/episodes/GetEpisodeListRequestQuery";
+import type { GetEpisodeListResponse } from "@wsh-2024/schema/src/api/episodes/GetEpisodeListResponse";
+import type { GetEpisodeRequestParams } from "@wsh-2024/schema/src/api/episodes/GetEpisodeRequestParams";
+import type { GetEpisodeResponse } from "@wsh-2024/schema/src/api/episodes/GetEpisodeResponse";
+import type { PatchEpisodeRequestBody } from "@wsh-2024/schema/src/api/episodes/PatchEpisodeRequestBody";
+import type { PatchEpisodeRequestParams } from "@wsh-2024/schema/src/api/episodes/PatchEpisodeRequestParams";
+import type { PatchEpisodeResponse } from "@wsh-2024/schema/src/api/episodes/PatchEpisodeResponse";
+import type { PostEpisodeRequestBody } from "@wsh-2024/schema/src/api/episodes/PostEpisodeRequestBody";
+import type { PostEpisodeResponse } from "@wsh-2024/schema/src/api/episodes/PostEpisodeResponse";
+import { episode, episodePage } from "@wsh-2024/schema/src/models";
 
-import { getDatabase } from '../database/drizzle';
+import { getDatabase } from "../database/drizzle";
 
 type EpisodeRepositoryInterface = {
-  create(options: { body: PostEpisodeRequestBody }): Promise<Result<PostEpisodeResponse, HTTPException>>;
-  delete(options: { params: DeleteEpisodeRequestParams }): Promise<Result<DeleteEpisodeResponse, HTTPException>>;
-  read(options: { params: GetEpisodeRequestParams }): Promise<Result<GetEpisodeResponse, HTTPException>>;
-  readAll(options: { query: GetEpisodeListRequestQuery }): Promise<Result<GetEpisodeListResponse, HTTPException>>;
+  create(
+    options: { body: PostEpisodeRequestBody },
+  ): Promise<Result<PostEpisodeResponse, HTTPException>>;
+  delete(
+    options: { params: DeleteEpisodeRequestParams },
+  ): Promise<Result<DeleteEpisodeResponse, HTTPException>>;
+  read(
+    options: { params: GetEpisodeRequestParams },
+  ): Promise<Result<GetEpisodeResponse, HTTPException>>;
+  readAll(
+    options: { query: GetEpisodeListRequestQuery },
+  ): Promise<Result<GetEpisodeListResponse, HTTPException>>;
   update(options: {
     body: PatchEpisodeRequestBody;
     params: PatchEpisodeRequestParams;
@@ -30,7 +38,9 @@ type EpisodeRepositoryInterface = {
 };
 
 class EpisodeRepository implements EpisodeRepositoryInterface {
-  async read(options: { params: GetEpisodeRequestParams }): Promise<Result<GetEpisodeResponse, HTTPException>> {
+  async read(
+    options: { params: GetEpisodeRequestParams },
+  ): Promise<Result<GetEpisodeResponse, HTTPException>> {
     try {
       const data = await getDatabase().query.episode.findFirst({
         columns: {
@@ -99,14 +109,21 @@ class EpisodeRepository implements EpisodeRepositoryInterface {
       });
 
       if (data == null) {
-        throw new HTTPException(404, { message: `Episode:${options.params.episodeId} is not found` });
+        throw new HTTPException(404, {
+          message: `Episode:${options.params.episodeId} is not found`,
+        });
       }
       return ok(data);
     } catch (cause) {
       if (cause instanceof HTTPException) {
         return err(cause);
       }
-      return err(new HTTPException(500, { cause, message: `Failed to read episode:${options.params.episodeId}.` }));
+      return err(
+        new HTTPException(500, {
+          cause,
+          message: `Failed to read episode:${options.params.episodeId}.`,
+        }),
+      );
     }
   }
 
@@ -131,55 +148,10 @@ class EpisodeRepository implements EpisodeRepositoryInterface {
           return eq(episode.bookId, options.query.bookId);
         },
         with: {
-          book: {
-            columns: {
-              description: true,
-              id: true,
-              name: true,
-              nameRuby: true,
-            },
-            with: {
-              author: {
-                columns: {
-                  description: true,
-                  id: true,
-                  name: true,
-                },
-                with: {
-                  image: {
-                    columns: {
-                      alt: true,
-                      id: true,
-                    },
-                  },
-                },
-              },
-              image: {
-                columns: {
-                  alt: true,
-                  id: true,
-                },
-              },
-            },
-          },
           image: {
             columns: {
               alt: true,
               id: true,
-            },
-          },
-          pages: {
-            columns: {
-              id: true,
-              page: true,
-            },
-            with: {
-              image: {
-                columns: {
-                  alt: true,
-                  id: true,
-                },
-              },
             },
           },
         },
@@ -190,11 +162,18 @@ class EpisodeRepository implements EpisodeRepositoryInterface {
       if (cause instanceof HTTPException) {
         return err(cause);
       }
-      return err(new HTTPException(500, { cause, message: `Failed to read episode list.` }));
+      return err(
+        new HTTPException(500, {
+          cause,
+          message: `Failed to read episode list.`,
+        }),
+      );
     }
   }
 
-  async create(options: { body: PostEpisodeRequestBody }): Promise<Result<PostEpisodeResponse, HTTPException>> {
+  async create(
+    options: { body: PostEpisodeRequestBody },
+  ): Promise<Result<PostEpisodeResponse, HTTPException>> {
     try {
       const result = await getDatabase()
         .insert(episode)
@@ -203,7 +182,7 @@ class EpisodeRepository implements EpisodeRepositoryInterface {
         .execute();
 
       if (result[0] == null) {
-        throw new HTTPException(500, { message: 'Failed to create episode.' });
+        throw new HTTPException(500, { message: "Failed to create episode." });
       }
       return this.read({
         params: {
@@ -214,7 +193,9 @@ class EpisodeRepository implements EpisodeRepositoryInterface {
       if (cause instanceof HTTPException) {
         return err(cause);
       }
-      return err(new HTTPException(500, { cause, message: `Failed to create episode.` }));
+      return err(
+        new HTTPException(500, { cause, message: `Failed to create episode.` }),
+      );
     }
   }
 
@@ -231,7 +212,9 @@ class EpisodeRepository implements EpisodeRepositoryInterface {
         .execute();
 
       if (result[0] == null) {
-        throw new HTTPException(500, { message: `Failed to update episode:${options.params.episodeId}.` });
+        throw new HTTPException(500, {
+          message: `Failed to update episode:${options.params.episodeId}.`,
+        });
       }
       return this.read({
         params: {
@@ -242,15 +225,25 @@ class EpisodeRepository implements EpisodeRepositoryInterface {
       if (cause instanceof HTTPException) {
         return err(cause);
       }
-      return err(new HTTPException(500, { cause, message: `Failed to update episode:${options.params.episodeId}.` }));
+      return err(
+        new HTTPException(500, {
+          cause,
+          message: `Failed to update episode:${options.params.episodeId}.`,
+        }),
+      );
     }
   }
 
-  async delete(options: { params: DeleteEpisodeRequestParams }): Promise<Result<DeleteEpisodeResponse, HTTPException>> {
+  async delete(
+    options: { params: DeleteEpisodeRequestParams },
+  ): Promise<Result<DeleteEpisodeResponse, HTTPException>> {
     try {
       await getDatabase().transaction(async (tx) => {
-        await tx.delete(episode).where(eq(episode.id, options.params.episodeId)).execute();
-        await tx.delete(episodePage).where(eq(episodePage.episodeId, options.params.episodeId)).execute();
+        await tx.delete(episode).where(eq(episode.id, options.params.episodeId))
+          .execute();
+        await tx.delete(episodePage).where(
+          eq(episodePage.episodeId, options.params.episodeId),
+        ).execute();
       });
 
       return ok({});
@@ -258,7 +251,12 @@ class EpisodeRepository implements EpisodeRepositoryInterface {
       if (cause instanceof HTTPException) {
         return err(cause);
       }
-      return err(new HTTPException(500, { cause, message: `Failed to delete episode:${options.params.episodeId}.` }));
+      return err(
+        new HTTPException(500, {
+          cause,
+          message: `Failed to delete episode:${options.params.episodeId}.`,
+        }),
+      );
     }
   }
 }
