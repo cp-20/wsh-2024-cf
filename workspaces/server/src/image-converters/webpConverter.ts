@@ -1,8 +1,8 @@
-import type { ConverterInterface } from './ConverterInterface';
+import type { ConverterInterface } from "./ConverterInterface";
 
 export const webpConverter: ConverterInterface = {
   async decode(data: Uint8Array): Promise<ImageData> {
-    const { default: sharp } = await import('sharp');
+    const { default: sharp } = await import("sharp");
 
     return sharp(data)
       .ensureAlpha()
@@ -12,7 +12,7 @@ export const webpConverter: ConverterInterface = {
       })
       .then(({ data, info }) => {
         return {
-          colorSpace: 'srgb',
+          colorSpace: "srgb",
           data: new Uint8ClampedArray(data),
           height: info.height,
           width: info.width,
@@ -20,7 +20,7 @@ export const webpConverter: ConverterInterface = {
       });
   },
   async encode(data: ImageData): Promise<Uint8Array> {
-    const { default: sharp } = await import('sharp');
+    const { default: sharp } = await import("sharp");
 
     return sharp(data.data, {
       raw: {
@@ -29,7 +29,7 @@ export const webpConverter: ConverterInterface = {
         width: data.width,
       },
     })
-      .webp({ effort: 6 })
+      .webp({ effort: 6, quality: 30 })
       .toBuffer();
   },
 };
