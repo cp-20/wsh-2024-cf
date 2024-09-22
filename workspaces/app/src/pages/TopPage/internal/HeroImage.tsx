@@ -25,7 +25,7 @@ export const HeroImage: React.FC = () => {
         <source media="(min-width: 960px)" srcSet="/assets/hero-image-1280.webp" />
         <source media="(min-width: 640px)" srcSet="/assets/hero-image-960.webp" />
         <source media="(min-width: 320px)" srcSet="/assets/hero-image-640.webp" />
-        <_Image src="/assets/hero-image-320.webp" />
+        <_Image loading="eager" src="/assets/hero-image-320.webp" />
       </_Picture>
     </_Wrapper>
   );
