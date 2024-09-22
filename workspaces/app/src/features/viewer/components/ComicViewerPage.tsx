@@ -1,16 +1,23 @@
-import { useRef } from 'react';
-import { useAsync } from 'react-use';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-
-import { decrypt } from '@wsh-2024/image-encrypt/src/decrypt';
 
 import { getImageUrl } from '../../../lib/image/getImageUrl';
 
-const _Canvas = styled.canvas`
+const decryptKey = 'wsh-2024-encrypt-key';
+const decrypt = (buffer: Uint8Array): Uint8Array => {
+  const encrypted = new Uint8Array(buffer.byteLength);
+  for (let i = 0; i < buffer.byteLength; i++) {
+    encrypted[i] = buffer[i]! ^ decryptKey.charCodeAt(0);
+  }
+  return encrypted;
+};
+
+const _Image = styled.img`
   height: 100%;
   width: auto;
   flex-grow: 0;
   flex-shrink: 0;
+  pointer-events: none;
 `;
 
 type Props = {
@@ -18,32 +25,24 @@ type Props = {
 };
 
 export const ComicViewerPage = ({ pageImageId }: Props) => {
-  const ref = useRef<HTMLCanvasElement>(null);
+  const ref = useRef<HTMLImageElement>(null);
+  const url = getImageUrl({
+    format: 'webp',
+    imageId: pageImageId,
+  });
 
-  useAsync(async () => {
-    const image = new Image();
-    image.src = getImageUrl({
-      format: 'webp',
-      imageId: pageImageId,
-    });
-    await image.decode();
+  useEffect(() => {
+    const fetchImage = async () => {
+      const response = await fetch(url);
+      const buffer = await response.arrayBuffer();
+      const decrypted = decrypt(new Uint8Array(buffer));
+      const blob = new Blob([decrypted], { type: 'image/webp' });
+      const imageUrl = URL.createObjectURL(blob);
+      ref.current!.src = imageUrl;
+    };
 
-    const canvas = ref.current!;
-    canvas.width = image.naturalWidth;
-    canvas.height = image.naturalHeight;
-    const ctx = canvas.getContext('2d')!;
+    fetchImage();
+  }, [url]);
 
-    decrypt({
-      exportCanvasContext: ctx,
-      sourceImage: image,
-      sourceImageInfo: {
-        height: image.naturalHeight,
-        width: image.naturalWidth,
-      },
-    });
-
-    canvas.setAttribute('role', 'img');
-  }, [pageImageId]);
-
-  return <_Canvas ref={ref} />;
+  return <_Image ref={ref} />;
 };
