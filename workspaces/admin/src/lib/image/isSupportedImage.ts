@@ -8,5 +8,5 @@ const SUPPORTED_MIME_TYPE_LIST = [
 ];
 
 export async function isSupportedImage(image: File): Promise<boolean> {
-  return !SUPPORTED_MIME_TYPE_LIST.includes(image.type);
+  return SUPPORTED_MIME_TYPE_LIST.includes(image.type);
 }
