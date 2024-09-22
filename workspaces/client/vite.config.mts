@@ -1,6 +1,7 @@
 import path from "node:path";
 
 import findPackageDir from "pkg-dir";
+import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
 
 const PACKAGE_DIR = (await findPackageDir(process.cwd()))!;
@@ -22,6 +23,11 @@ export default defineConfig({
         }
         warn(warning);
       },
+      plugins: [visualizer({
+        brotliSize: true,
+        filename: "dist/stats.html",
+        gzipSize: true,
+      })],
     },
   },
   define: {
