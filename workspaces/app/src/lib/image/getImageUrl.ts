@@ -1,20 +1,22 @@
 type Params = {
-  format: 'avif' | 'webp' | 'png' | 'jpg' | 'jxl';
+  format: "avif" | "webp" | "png" | "jpg" | "jxl";
   height?: number;
   imageId: string;
   width?: number;
 };
 
-export function getImageUrl({ format, height, imageId, width }: Params): string {
-  const url = new URL(`/images/${imageId}`, location.href);
+export function getImageUrl(
+  { format, height, imageId, width }: Params,
+): string {
+  const params = new URLSearchParams();
 
-  url.searchParams.set('format', format);
+  params.set("format", format);
   if (width != null) {
-    url.searchParams.set('width', `${width}`);
+    params.set("width", `${width}`);
   }
   if (height != null) {
-    url.searchParams.set('height', `${height}`);
+    params.set("height", `${height}`);
   }
 
-  return url.href;
+  return `/images/${imageId}?${params.toString()}`;
 }
