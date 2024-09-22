@@ -17,7 +17,7 @@ const _Wrapper = styled.div`
   }
   --width: calc(100cqw / var(--page-count-per-view));
   --page-height: calc(var(--width) / (1075 / 1518));
-  max-height: clamp(500px, var(--page-height), 650px);
+  height: clamp(500px, var(--page-height), 650px);
   overflow: hidden;
 `;
 
