@@ -18,6 +18,7 @@ const _Image = styled.img`
   flex-grow: 0;
   flex-shrink: 0;
   pointer-events: none;
+  user-select: none;
 `;
 
 type Props = {
