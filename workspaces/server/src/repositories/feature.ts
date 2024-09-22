@@ -1,14 +1,16 @@
-import { HTTPException } from 'hono/http-exception';
-import type { Result } from 'neverthrow';
-import { err, ok } from 'neverthrow';
+import { HTTPException } from "hono/http-exception";
+import type { Result } from "neverthrow";
+import { err, ok } from "neverthrow";
 
-import type { GetFeatureListRequestQuery } from '@wsh-2024/schema/src/api/features/GetFeatureListRequestQuery';
-import type { GetFeatureListResponse } from '@wsh-2024/schema/src/api/features/GetFeatureListResponse';
+import type { GetFeatureListRequestQuery } from "@wsh-2024/schema/src/api/features/GetFeatureListRequestQuery";
+import type { GetFeatureListResponse } from "@wsh-2024/schema/src/api/features/GetFeatureListResponse";
 
-import { getDatabase } from '../database/drizzle';
+import { getDatabase } from "../database/drizzle";
 
 type FeatureRepositoryInterface = {
-  readAll(options: { query: GetFeatureListRequestQuery }): Promise<Result<GetFeatureListResponse, HTTPException>>;
+  readAll(
+    options: { query: GetFeatureListRequestQuery },
+  ): Promise<Result<GetFeatureListResponse, HTTPException>>;
 };
 
 class FeatureRepository implements FeatureRepositoryInterface {
@@ -48,14 +50,6 @@ class FeatureRepository implements FeatureRepositoryInterface {
                   },
                 },
               },
-              episodes: {
-                columns: {
-                  chapter: true,
-                  description: true,
-                  id: true,
-                  name: true,
-                },
-              },
               image: {
                 columns: {
                   alt: true,
@@ -72,7 +66,12 @@ class FeatureRepository implements FeatureRepositoryInterface {
       if (cause instanceof HTTPException) {
         return err(cause);
       }
-      return err(new HTTPException(500, { cause, message: `Failed to read feature list.` }));
+      return err(
+        new HTTPException(500, {
+          cause,
+          message: `Failed to read feature list.`,
+        }),
+      );
     }
   }
 }
