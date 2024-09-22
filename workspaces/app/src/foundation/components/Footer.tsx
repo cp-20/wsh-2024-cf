@@ -1,13 +1,8 @@
 import { useSetAtom } from 'jotai';
-import React, { useId } from 'react';
+import React, { Suspense, useId } from 'react';
 import styled from 'styled-components';
 
 import { DialogContentAtom } from '../atoms/DialogContentAtom';
-import { COMPANY } from '../constants/Company';
-import { CONTACT } from '../constants/Contact';
-import { OVERVIEW } from '../constants/Overview';
-import { QUESTION } from '../constants/Question';
-import { TERM } from '../constants/Term';
 import { Color, Space, Typography } from '../styles/variables';
 
 import { Box } from './Box';
@@ -23,6 +18,46 @@ const _Button = styled(Button)`
 const _Content = styled.section`
   white-space: pre-line;
 `;
+
+const LazyTerm = React.lazy(() =>
+  fetch('/assets/constants/term.txt')
+    .then((res) => res.text())
+    .then((text) => {
+      return { default: () => <>{text}</> };
+    }),
+);
+
+const LazyContact = React.lazy(() =>
+  fetch('/assets/constants/contact.txt')
+    .then((res) => res.text())
+    .then((text) => {
+      return { default: () => <>{text}</> };
+    }),
+);
+
+const LazyQuestion = React.lazy(() =>
+  fetch('/assets/constants/question.txt')
+    .then((res) => res.text())
+    .then((text) => {
+      return { default: () => <>{text}</> };
+    }),
+);
+
+const LazyCompany = React.lazy(() =>
+  fetch('/assets/constants/company.txt')
+    .then((res) => res.text())
+    .then((text) => {
+      return { default: () => <>{text}</> };
+    }),
+);
+
+const LazyOverview = React.lazy(() =>
+  fetch('/assets/constants/overview.txt')
+    .then((res) => res.text())
+    .then((text) => {
+      return { default: () => <>{text}</> };
+    }),
+);
 
 export const Footer: React.FC = () => {
   const [isClient, setIsClient] = React.useState(false);
@@ -47,7 +82,9 @@ export const Footer: React.FC = () => {
         </Text>
         <Spacer height={Space * 1} />
         <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
-          {TERM}
+          <Suspense fallback={<div />}>
+            <LazyTerm />
+          </Suspense>
         </Text>
       </_Content>,
     );
@@ -61,7 +98,9 @@ export const Footer: React.FC = () => {
         </Text>
         <Spacer height={Space * 1} />
         <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
-          {CONTACT}
+          <Suspense fallback={<div />}>
+            <LazyContact />
+          </Suspense>
         </Text>
       </_Content>,
     );
@@ -75,7 +114,9 @@ export const Footer: React.FC = () => {
         </Text>
         <Spacer height={Space * 1} />
         <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
-          {QUESTION}
+          <Suspense fallback={<div />}>
+            <LazyQuestion />
+          </Suspense>
         </Text>
       </_Content>,
     );
@@ -89,7 +130,9 @@ export const Footer: React.FC = () => {
         </Text>
         <Spacer height={Space * 1} />
         <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
-          {COMPANY}
+          <Suspense fallback={<div />}>
+            <LazyCompany />
+          </Suspense>
         </Text>
       </_Content>,
     );
@@ -103,7 +146,9 @@ export const Footer: React.FC = () => {
         </Text>
         <Spacer height={Space * 1} />
         <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
-          {OVERVIEW}
+          <Suspense fallback={<div />}>
+            <LazyOverview />
+          </Suspense>
         </Text>
       </_Content>,
     );
