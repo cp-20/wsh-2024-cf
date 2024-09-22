@@ -23,7 +23,6 @@ const app = new Hono();
 
 async function createInjectDataStr(path: string): Promise<Record<string, unknown>> {
   const json: Record<string, unknown> = {};
-  console.log('path', path);
 
   if (path === '/') {
     const dayOfWeek = getDayOfWeekStr(new Date());
