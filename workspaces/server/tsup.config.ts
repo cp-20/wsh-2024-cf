@@ -22,7 +22,7 @@ export default defineConfig(async (): Promise<Options[]> => {
       },
       format: "cjs",
       metafile: true,
-      minify: true,
+      minify: false,
       noExternal: [/@wsh-2024\/.*/],
       outDir: OUTPUT_DIR,
       sourcemap: true,
