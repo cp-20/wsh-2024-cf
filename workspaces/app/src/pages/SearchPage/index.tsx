@@ -8,6 +8,8 @@ import { Color, Space, Typography } from '../../foundation/styles/variables';
 import { Input } from './internal/Input';
 import { SearchResult } from './internal/SearchResult';
 
+let timeout: NodeJS.Timeout;
+
 const SearchPage: React.FC = () => {
   const { data: books } = useBookList({ query: {} });
 
@@ -15,10 +17,15 @@ const SearchPage: React.FC = () => {
 
   const [isClient, setIsClient] = useState(false);
   const [keyword, setKeyword] = useState('');
+  const [deferredKeyword, setDeferredKeyword] = useState(keyword);
 
   const onChangedInput = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setKeyword(event.target.value);
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        setDeferredKeyword(event.target.value);
+      }, 200);
     },
     [setKeyword],
   );
@@ -34,7 +41,7 @@ const SearchPage: React.FC = () => {
         <Text color={Color.MONO_100} id={searchResultsA11yId} typography={Typography.NORMAL20} weight="bold">
           検索結果
         </Text>
-        {keyword !== '' && <SearchResult books={books} keyword={keyword} />}
+        {deferredKeyword !== '' && <SearchResult books={books} keyword={deferredKeyword} />}
       </Box>
     </Box>
   );
