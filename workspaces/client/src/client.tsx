@@ -6,9 +6,10 @@ import { ClientApp } from '@wsh-2024/app/src/index';
 
 const main = async () => {
   document.addEventListener('DOMContentLoaded', () => {
+    const fallback = JSON.parse(document.querySelector('#inject-data')?.innerHTML ?? '{}');
     ReactDOM.hydrateRoot(
       document.querySelector('#root')!,
-      <SWRConfig value={{ revalidateIfStale: true, revalidateOnFocus: false, revalidateOnReconnect: false }}>
+      <SWRConfig value={{ fallback, revalidateOnFocus: false, revalidateOnReconnect: false }}>
         <BrowserRouter>
           <ClientApp />
         </BrowserRouter>
